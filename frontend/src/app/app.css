@@ -1,0 +1,54 @@
+:host {
+  display: flex;
+  height: 100vh;
+}
+
+nav {
+  width: 200px;
+  min-width: 200px;
+  background: #1a1a2e;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 0;
+  gap: 0.125rem;
+}
+
+nav::before {
+  content: 'FundManagement';
+  display: block;
+  color: #e2e8f0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0 1.25rem 1rem;
+  border-bottom: 1px solid #2d2d4e;
+  margin-bottom: 0.5rem;
+}
+
+nav a {
+  color: #a0aec0;
+  text-decoration: none;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: background 0.15s, color 0.15s;
+}
+
+nav a:hover {
+  background: #2d2d4e;
+  color: #e2e8f0;
+}
+
+nav a.active {
+  background: rgba(102, 126, 234, 0.2);
+  color: #a3b3f7;
+  border-left: 3px solid #667eea;
+  padding-left: calc(1.25rem - 3px);
+}
+
+main {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem;
+}

@@ -59,3 +59,18 @@ export interface HealthStatus {
   circle: string;
   timestamp: string;
 }
+
+export interface ReconciliationResult {
+  runAt: string;
+  totalDeposits: number;
+  matchedDeposits: number;
+  unmatchedDeposits: number;
+  totalWithdrawals: number;
+  matchedWithdrawals: number;
+  unmatchedWithdrawals: number;
+  mismatches: string[];
+}
+
+export interface BalanceResponse {
+  balance: number;
+}
