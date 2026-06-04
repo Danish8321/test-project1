@@ -1,1 +1,50 @@
-<p>ledger works!</p>
+<h1>Ledger</h1>
+
+<div class="picker-row">
+  <label>Funding Account
+    <select
+      [ngModel]="selectedAccountId"
+      (ngModelChange)="onAccountChange($event)"
+      name="account"
+    >
+      <option value="">Select funding account…</option>
+      @for (a of accounts(); track a.id) {
+        <option [value]="a.id">{{ a.customerName }} — {{ a.currency }} ({{ a.id.slice(0, 8) }}…)</option>
+      }
+    </select>
+  </label>
+
+  @if (balance() !== null) {
+    <div class="balance-card">
+      <span class="label">Balance</span>
+      <span class="amount">{{ balance() | number:'1.2-6' }} USDC</span>
+    </div>
+  }
+</div>
+
+@if (loading()) {
+  <p class="loading">Loading entries…</p>
+}
+
+@if (selectedAccountId && !loading()) {
+  <div class="card">
+    <table>
+      <thead>
+        <tr><th>Type</th><th>Amount</th><th>Reference</th><th>Date</th></tr>
+      </thead>
+      <tbody>
+        @for (e of entries(); track e.id) {
+          <tr>
+            <td><span class="badge" [class]="e.entryType.toLowerCase()">{{ e.entryType }}</span></td>
+            <td [class.credit]="e.entryType === 'Credit'" [class.debit]="e.entryType === 'Debit'">
+              {{ e.entryType === 'Credit' ? '+' : '−' }}{{ e.amount | number:'1.2-6' }} USDC
+            </td>
+            <td class="mono">{{ e.referenceId || '—' }}</td>
+            <td>{{ e.createdAt | date:'short' }}</td>
+          </tr>
+        }
+        @empty { <tr><td colspan="4" class="empty">No ledger entries for this account</td></tr> }
+      </tbody>
+    </table>
+  </div>
+}
