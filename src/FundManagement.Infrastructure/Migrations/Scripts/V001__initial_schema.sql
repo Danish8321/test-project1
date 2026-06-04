@@ -1,16 +1,10 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-CREATE TYPE customer_type AS ENUM ('Circle', 'ExternalWallet');
-CREATE TYPE deposit_status AS ENUM ('Pending', 'Completed', 'Failed', 'Cancelled');
-CREATE TYPE withdrawal_status AS ENUM ('Pending', 'Completed', 'Failed');
-CREATE TYPE entry_type AS ENUM ('Credit', 'Debit');
-CREATE TYPE webhook_status AS ENUM ('Received', 'Processed', 'Failed', 'Duplicate');
-
 CREATE TABLE customers (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
-    customer_type customer_type NOT NULL,
+    customer_type TEXT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
@@ -25,9 +19,9 @@ CREATE TABLE deposits (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     customer_id UUID NOT NULL REFERENCES customers(id),
     funding_account_id UUID NOT NULL REFERENCES funding_accounts(id),
-    circle_payment_intent_id VARCHAR(255) NOT NULL UNIQUE,
+    circle_payment_intent_id TEXT NOT NULL DEFAULT '',
     amount NUMERIC(18,6) NOT NULL,
-    status deposit_status NOT NULL DEFAULT 'Pending',
+    status TEXT NOT NULL DEFAULT 'Pending',
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -36,9 +30,9 @@ CREATE TABLE withdrawals (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     customer_id UUID NOT NULL REFERENCES customers(id),
     funding_account_id UUID NOT NULL REFERENCES funding_accounts(id),
-    circle_payout_id VARCHAR(255) NOT NULL UNIQUE,
+    circle_payout_id TEXT NOT NULL DEFAULT '',
     amount NUMERIC(18,6) NOT NULL,
-    status withdrawal_status NOT NULL DEFAULT 'Pending',
+    status TEXT NOT NULL DEFAULT 'Pending',
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -46,36 +40,21 @@ CREATE TABLE withdrawals (
 CREATE TABLE ledger_entries (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     funding_account_id UUID NOT NULL REFERENCES funding_accounts(id),
-    entry_type entry_type NOT NULL,
+    entry_type TEXT NOT NULL,
     amount NUMERIC(18,6) NOT NULL,
-    reference_id VARCHAR(255) NOT NULL,
+    reference_id TEXT NOT NULL DEFAULT '',
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE webhook_events (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    circle_event_id VARCHAR(255) NOT NULL UNIQUE,
-    event_type VARCHAR(100) NOT NULL,
+    circle_event_id TEXT NOT NULL UNIQUE,
+    event_type TEXT NOT NULL,
     payload JSONB NOT NULL,
-    status webhook_status NOT NULL DEFAULT 'Received',
+    status TEXT NOT NULL DEFAULT 'Received',
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     processed_at TIMESTAMPTZ
 );
 
-CREATE TABLE reconciliation_records (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    circle_reference_id VARCHAR(255) NOT NULL,
-    record_type VARCHAR(50) NOT NULL,
-    amount NUMERIC(18,6) NOT NULL,
-    status VARCHAR(50) NOT NULL,
-    mismatch_reason TEXT,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
--- Indexes for balance derivation performance
 CREATE INDEX idx_ledger_entries_funding_account_id ON ledger_entries(funding_account_id);
 CREATE INDEX idx_ledger_entries_reference_id ON ledger_entries(reference_id);
-
--- Prevent duplicate reconciliation records
-ALTER TABLE reconciliation_records
-    ADD CONSTRAINT uq_reconciliation_records UNIQUE (circle_reference_id, record_type);
