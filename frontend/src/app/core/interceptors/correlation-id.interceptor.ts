@@ -1,0 +1,8 @@
+import { HttpInterceptorFn } from '@angular/common/http';
+
+export const correlationIdInterceptor: HttpInterceptorFn = (req, next) => {
+  const correlationId = crypto.randomUUID();
+  return next(req.clone({
+    headers: req.headers.set('X-Correlation-Id', correlationId)
+  }));
+};
