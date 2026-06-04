@@ -1,1 +1,67 @@
-<p>dashboard works!</p>
+<h1>Dashboard</h1>
+
+@if (health()) {
+  <section class="health-row">
+    <div class="health-card" [class.ok]="health()!.db === 'ok'" [class.err]="health()!.db !== 'ok'">
+      <span class="label">Database</span>
+      <span class="val">{{ health()!.db }}</span>
+    </div>
+    <div class="health-card" [class.ok]="health()!.circle === 'ok'" [class.err]="health()!.circle !== 'ok'">
+      <span class="label">Circle API</span>
+      <span class="val">{{ health()!.circle }}</span>
+    </div>
+  </section>
+}
+
+<div class="grid">
+  <section class="card">
+    <h2>Recent Deposits</h2>
+    <table>
+      <thead><tr><th>Amount</th><th>Status</th><th>Created</th></tr></thead>
+      <tbody>
+        @for (d of deposits(); track d.id) {
+          <tr>
+            <td>{{ d.amount | number:'1.2-2' }} USDC</td>
+            <td><span class="badge" [class]="d.status.toLowerCase()">{{ d.status }}</span></td>
+            <td>{{ d.createdAt | date:'short' }}</td>
+          </tr>
+        }
+        @empty { <tr><td colspan="3" class="empty">No deposits</td></tr> }
+      </tbody>
+    </table>
+  </section>
+
+  <section class="card">
+    <h2>Recent Withdrawals</h2>
+    <table>
+      <thead><tr><th>Amount</th><th>Status</th><th>Created</th></tr></thead>
+      <tbody>
+        @for (w of withdrawals(); track w.id) {
+          <tr>
+            <td>{{ w.amount | number:'1.2-2' }} USDC</td>
+            <td><span class="badge" [class]="w.status.toLowerCase()">{{ w.status }}</span></td>
+            <td>{{ w.createdAt | date:'short' }}</td>
+          </tr>
+        }
+        @empty { <tr><td colspan="3" class="empty">No withdrawals</td></tr> }
+      </tbody>
+    </table>
+  </section>
+
+  <section class="card">
+    <h2>Recent Webhooks</h2>
+    <table>
+      <thead><tr><th>Event Type</th><th>Status</th><th>Received</th></tr></thead>
+      <tbody>
+        @for (wh of webhooks(); track wh.id) {
+          <tr>
+            <td>{{ wh.eventType }}</td>
+            <td><span class="badge" [class]="wh.status.toLowerCase()">{{ wh.status }}</span></td>
+            <td>{{ wh.createdAt | date:'short' }}</td>
+          </tr>
+        }
+        @empty { <tr><td colspan="3" class="empty">No webhooks</td></tr> }
+      </tbody>
+    </table>
+  </section>
+</div>
