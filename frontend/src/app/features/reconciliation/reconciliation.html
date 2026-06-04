@@ -1,1 +1,65 @@
-<p>reconciliation works!</p>
+<div class="page-header">
+  <h1>Reconciliation</h1>
+  <button (click)="run()" [disabled]="running()">
+    {{ running() ? 'Running…' : 'Run Reconciliation' }}
+  </button>
+</div>
+
+@if (error()) {
+  <div class="alert-error">{{ error() }}</div>
+}
+
+@if (result()) {
+  <p class="run-at">Run at: {{ result()!.runAt | date:'medium' }}</p>
+
+  <div class="summary-grid">
+    <div class="summary-card">
+      <h2>Deposits</h2>
+      <div class="stat-row">
+        <span class="label">Total</span>
+        <span class="val">{{ result()!.totalDeposits }}</span>
+      </div>
+      <div class="stat-row">
+        <span class="label">Matched</span>
+        <span class="val ok">{{ result()!.matchedDeposits }}</span>
+      </div>
+      <div class="stat-row">
+        <span class="label">Unmatched</span>
+        <span class="val" [class.err]="result()!.unmatchedDeposits > 0">{{ result()!.unmatchedDeposits }}</span>
+      </div>
+    </div>
+
+    <div class="summary-card">
+      <h2>Withdrawals</h2>
+      <div class="stat-row">
+        <span class="label">Total</span>
+        <span class="val">{{ result()!.totalWithdrawals }}</span>
+      </div>
+      <div class="stat-row">
+        <span class="label">Matched</span>
+        <span class="val ok">{{ result()!.matchedWithdrawals }}</span>
+      </div>
+      <div class="stat-row">
+        <span class="label">Unmatched</span>
+        <span class="val" [class.err]="result()!.unmatchedWithdrawals > 0">{{ result()!.unmatchedWithdrawals }}</span>
+      </div>
+    </div>
+  </div>
+
+  @if (result()!.mismatches.length > 0) {
+    <section class="card mismatches">
+      <h2>Mismatches ({{ result()!.mismatches.length }})</h2>
+      <ul>
+        @for (m of result()!.mismatches; track m) {
+          <li class="mismatch">{{ m }}</li>
+        }
+      </ul>
+    </section>
+  } @else {
+    <div class="all-clear">All records match Circle. No mismatches found.</div>
+  }
+}
+
+@if (!result() && !running()) {
+  <p class="hint">Click "Run Reconciliation" to compare local records against Circle API.</p>
+}
