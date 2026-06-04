@@ -5,6 +5,7 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  styleUrl: './app.css',
   template: `
     <nav>
       <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
