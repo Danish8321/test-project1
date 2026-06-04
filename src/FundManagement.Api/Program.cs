@@ -54,5 +54,11 @@ if (app.Environment.IsDevelopment())
 app.UseCors();
 
 app.MapHealthEndpoints();
+app.MapCustomerEndpoints();
+app.MapDepositEndpoints();
+app.MapWithdrawalEndpoints();
+app.MapLedgerEndpoints();
+app.MapWebhookEndpoints();
+app.MapReconciliationEndpoints();
 
 app.Run();
