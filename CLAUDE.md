@@ -33,12 +33,12 @@ npx playwright codegen http://localhost:4200
 
 | Layer | Tech |
 |-------|------|
-| Frontend | Angular 22 — standalone components, signals, signal stores, `@if/@for/@switch` |
+| Frontend | Angular 22 — standalone, signals, signal stores, `@if/@for/@switch` |
 | Backend | .NET 10 — ASP.NET Core Minimal APIs, MediatR CQRS |
-| ORM | Dapper — raw parameterized SQL, `NpgsqlConnection` via DI |
+| ORM | Dapper — raw SQL, `NpgsqlConnection` via DI |
 | Database | PostgreSQL 16, DbUp migrations |
-| Integration | Circle APIs (sandbox) via Circle MCP + Circle Skills |
-| Docs | context7 MCP for Angular/Dapper/.NET live API docs |
+| Integration | Circle APIs (sandbox) — Circle MCP + Skills |
+| Docs | context7 MCP — Angular/Dapper/.NET live docs |
 | E2E | Playwright CLI |
 
 ---
@@ -76,11 +76,11 @@ test-project1/
 
 **Think before coding.** State assumptions explicitly. If uncertain, ask. Surface tradeoffs — don't pick silently.
 
-**Simplicity first.** Minimum code that solves the problem. No speculative features, no abstractions for single-use code, no error handling for impossible scenarios.
+**Simplicity first.** Min code. No speculative features, no abstractions for single-use, no error handling for impossible scenarios.
 
-**Surgical changes.** Touch only what you must. Don't "improve" adjacent code. Match existing style. Every changed line must trace to the user's request.
+**Surgical changes.** Touch only what you must. Don't "improve" adjacent code. Match existing style. Every changed line must trace to request.
 
-**Goal-driven execution.** Define verifiable success criteria before implementing. For multi-step tasks, state a brief plan with verify steps.
+**Goal-driven execution.** Define verifiable success criteria before implementing. Multi-step tasks: brief plan + verify steps.
 
 ---
 

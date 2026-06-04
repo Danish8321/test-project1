@@ -16,8 +16,8 @@ PostgreSQL              Circle APIs (Sandbox)
 
 ## Clean Architecture Rules
 
-- Dependencies point inward only
-- Domain: zero external dependencies
+- Dependencies inward only
+- Domain: zero external deps
 - Application: depends only on Domain
 - Infrastructure: implements Application interfaces
 - Api: dispatches via MediatR only — no business logic
@@ -64,4 +64,4 @@ builder.Services.AddScoped<IDbConnection>(_ =>
     new NpgsqlConnection(builder.Configuration.GetConnectionString("DefaultConnection")));
 ```
 
-Inject `IDbConnection` directly into handlers. Never create connections manually.
+Inject `IDbConnection` directly into handlers. No manual connection creation.

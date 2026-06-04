@@ -1,6 +1,6 @@
 # Business Scenarios
 
-FundManagement owns a Circle Mint Account. Customers interact with FundManagement only — never directly with Circle.
+FundManagement owns Circle Mint Account. Customers interact with FundManagement only — never directly with Circle.
 
 ## Scenario 1 — Customer Has Circle Account
 ```
@@ -18,7 +18,7 @@ Customer → FundManagement Portal → Create Deposit Request
 ```
 
 ## Out of Scope (Document Only)
-Circle-to-Circle internal transfers. Do not implement during POC.
+Circle-to-Circle internal transfers. Skip during POC.
 
 ## Required Screens
 

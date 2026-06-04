@@ -35,7 +35,7 @@ DELETE /v1/notifications/subscriptions/{id}
 
 ## Usage Rules
 
-- Use Circle MCP for API exploration and sandbox testing before writing code
-- Use Circle Skills for generating integration code
-- Never hardcode Circle API keys — use User Secrets / env vars
+- Circle MCP: explore API + sandbox test before code
+- Circle Skills: generate integration code
+- No hardcoded API keys — use User Secrets / env vars
 - Store: CirclePaymentIntentId, CirclePayoutId, CircleEventId for idempotency

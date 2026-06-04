@@ -25,10 +25,10 @@ On duplicate: return 200, do not reprocess.
 
 ## Webhook Security
 
-1. Validate Circle signature (HMAC/header) before any processing
+1. Validate Circle signature (HMAC/header) before processing
 2. Check EventId for duplicate — store event first, then process
 3. Atomic DB write: event record persisted before handler runs
-4. Never mutate balances directly from webhook — only create ledger entries
+4. Never mutate balances from webhook — only create ledger entries
 
 ## Logging
 
