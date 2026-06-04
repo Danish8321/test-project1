@@ -1,1 +1,91 @@
-<p>customers works!</p>
+<div class="page-header">
+  <h1>Customers</h1>
+  <button (click)="showCreateCustomer.set(true)">+ New Customer</button>
+</div>
+
+@if (error()) {
+  <div class="alert-error">{{ error() }} <button class="btn-close" (click)="error.set(null)">×</button></div>
+}
+
+@if (showCreateCustomer()) {
+  <form class="card form" (ngSubmit)="createCustomer()">
+    <h2>Create Customer</h2>
+    <label>Name
+      <input [(ngModel)]="newCustomer.name" name="name" required />
+    </label>
+    <label>Email
+      <input [(ngModel)]="newCustomer.email" name="email" type="email" required />
+    </label>
+    <label>Type
+      <select [(ngModel)]="newCustomer.customerType" name="type">
+        <option value="Circle">Circle</option>
+        <option value="ExternalWallet">External Wallet</option>
+      </select>
+    </label>
+    <div class="form-actions">
+      <button type="submit">Create</button>
+      <button type="button" class="btn-secondary" (click)="showCreateCustomer.set(false)">Cancel</button>
+    </div>
+  </form>
+}
+
+<div class="layout">
+  <section class="card">
+    <h2>All Customers</h2>
+    <table>
+      <thead><tr><th>Name</th><th>Email</th><th>Type</th><th>Created</th></tr></thead>
+      <tbody>
+        @for (c of customers(); track c.id) {
+          <tr
+            [class.selected]="selected()?.id === c.id"
+            (click)="select(c)"
+            style="cursor:pointer"
+          >
+            <td>{{ c.name }}</td>
+            <td>{{ c.email }}</td>
+            <td><span class="badge">{{ c.customerType }}</span></td>
+            <td>{{ c.createdAt | date:'mediumDate' }}</td>
+          </tr>
+        }
+        @empty { <tr><td colspan="4" class="empty">No customers</td></tr> }
+      </tbody>
+    </table>
+  </section>
+
+  @if (selected()) {
+    <section class="card">
+      <div class="section-header">
+        <h2>Funding Accounts — {{ selected()!.name }}</h2>
+        <button (click)="showCreateAccount.set(true)">+ Add Account</button>
+      </div>
+
+      @if (showCreateAccount()) {
+        <form class="form inline-form" (ngSubmit)="createFundingAccount()">
+          <label>Currency
+            <select [(ngModel)]="newAccount.currency" name="currency">
+              <option value="USDC">USDC</option>
+            </select>
+          </label>
+          <div class="form-actions">
+            <button type="submit">Create</button>
+            <button type="button" class="btn-secondary" (click)="showCreateAccount.set(false)">Cancel</button>
+          </div>
+        </form>
+      }
+
+      <table>
+        <thead><tr><th>ID</th><th>Currency</th><th>Created</th></tr></thead>
+        <tbody>
+          @for (fa of fundingAccounts(); track fa.id) {
+            <tr>
+              <td class="mono">{{ fa.id.slice(0, 8) }}…</td>
+              <td>{{ fa.currency }}</td>
+              <td>{{ fa.createdAt | date:'mediumDate' }}</td>
+            </tr>
+          }
+          @empty { <tr><td colspan="3" class="empty">No funding accounts</td></tr> }
+        </tbody>
+      </table>
+    </section>
+  }
+</div>
