@@ -1,0 +1,21 @@
+h1 { font-size: 1.5rem; margin-bottom: 1.5rem; }
+
+.card { background: #fff; border-radius: 8px; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+
+table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+th { text-align: left; padding: 0.4rem 0; border-bottom: 2px solid #e2e8f0; color: #666; font-weight: 600; font-size: 0.8rem; }
+td { padding: 0.45rem 0.25rem; border-bottom: 1px solid #f0f0f0; vertical-align: top; }
+.mono { font-family: monospace; font-size: 0.8rem; }
+.empty { color: #999; font-style: italic; padding: 0.75rem 0; }
+
+.badge { padding: 0.15rem 0.45rem; border-radius: 4px; font-size: 0.72rem; font-weight: 600; }
+.badge.received  { background: #ebf8ff; color: #2b6cb0; }
+.badge.processed { background: #f0fff4; color: #276749; }
+.badge.failed    { background: #fff5f5; color: #c53030; }
+.badge.duplicate { background: #faf5ff; color: #553c9a; }
+
+.btn-expand { padding: 0.25rem 0.6rem; background: #f0f0f0; border: none; border-radius: 4px; cursor: pointer; font-size: 0.75rem; color: #555; }
+.btn-expand:hover { background: #e2e8f0; }
+
+.payload-row td { background: #1a1a2e; padding: 0; }
+.payload-row pre { margin: 0; padding: 1rem; font-size: 0.78rem; color: #a0aec0; overflow-x: auto; max-height: 300px; overflow-y: auto; }

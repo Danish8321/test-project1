@@ -1,1 +1,33 @@
-<p>webhooks works!</p>
+<h1>Webhook Events</h1>
+
+<div class="card">
+  <table>
+    <thead>
+      <tr><th>Event Type</th><th>Circle Event ID</th><th>Status</th><th>Received</th><th>Processed</th><th></th></tr>
+    </thead>
+    <tbody>
+      @for (wh of webhooks(); track wh.id) {
+        <tr>
+          <td>{{ wh.eventType }}</td>
+          <td class="mono">{{ wh.circleEventId }}</td>
+          <td><span class="badge" [class]="wh.status.toLowerCase()">{{ wh.status }}</span></td>
+          <td>{{ wh.createdAt | date:'short' }}</td>
+          <td>{{ wh.processedAt ? (wh.processedAt | date:'short') : '—' }}</td>
+          <td>
+            <button class="btn-expand" (click)="toggleExpand(wh.id)">
+              {{ expandedId() === wh.id ? '▲ hide' : '▼ payload' }}
+            </button>
+          </td>
+        </tr>
+        @if (expandedId() === wh.id) {
+          <tr class="payload-row">
+            <td colspan="6">
+              <pre>{{ formatPayload(wh.payload) }}</pre>
+            </td>
+          </tr>
+        }
+      }
+      @empty { <tr><td colspan="6" class="empty">No webhook events</td></tr> }
+    </tbody>
+  </table>
+</div>
