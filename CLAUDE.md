@@ -68,7 +68,7 @@ test-project1/
 4. **No EF Core** — Dapper + raw SQL only
 5. **No business logic in Api layer** — dispatch to MediatR only
 6. **Dependencies point inward** — Infrastructure never referenced by Domain/Application
-7. **Never commit secrets** — use `dotnet user-secrets` / env vars
+7. **Never commit real secrets** — replace placeholders in `appsettings.json` locally, never commit real keys
 
 ---
 

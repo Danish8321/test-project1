@@ -38,22 +38,23 @@ Log: Circle requests/responses, webhooks received, reconciliation results.
 
 ## Security
 
-Never commit: Circle API keys, secrets, connection strings.
+Never commit real API keys or secrets. `appsettings.json` is tracked with placeholder values — replace locally, never commit real values.
 
-Use dotnet user-secrets for local dev:
-```bash
-cd src/FundManagement.Api
-dotnet user-secrets set "Circle:ApiKey" "SAND_..."
-dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Host=localhost;..."
-```
-
-Required env keys:
+Config lives in `src/FundManagement.Api/appsettings.json`:
 ```json
 {
-  "Circle": { "ApiKey": "SAND_...", "BaseUrl": "https://api-sandbox.circle.com", "WebhookSecret": "..." },
-  "ConnectionStrings": { "DefaultConnection": "Host=localhost;Port=5432;Database=ifs_poc;Username=postgres;Password=localdev" }
+  "ConnectionStrings": {
+    "DefaultConnection": "Host=localhost;Port=5432;Database=ifs_poc;Username=postgres;Password=localdev"
+  },
+  "Circle": {
+    "ApiKey": "SAND_API_KEY_HERE",
+    "BaseUrl": "https://api-sandbox.circle.com",
+    "WebhookSecret": "WEBHOOK_SECRET_HERE"
+  }
 }
 ```
+
+For environment-specific overrides use `appsettings.Development.json` (gitignored).
 
 Angular environment (`frontend/src/environments/environment.ts`):
 ```typescript
