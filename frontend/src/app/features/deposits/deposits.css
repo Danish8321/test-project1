@@ -1,0 +1,31 @@
+.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+h1 { font-size: 1.5rem; }
+h2 { font-size: 0.9rem; font-weight: 600; color: #555; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.75rem; }
+
+button { padding: 0.5rem 1rem; background: #667eea; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 0.875rem; }
+button:hover { background: #5a67d8; }
+button:disabled { opacity: 0.6; cursor: not-allowed; }
+.btn-secondary { background: #e2e8f0; color: #333; }
+.btn-secondary:hover { background: #cbd5e0; }
+.btn-close { background: none; color: inherit; padding: 0 0.25rem; font-size: 1rem; }
+.btn-close:hover { background: none; }
+
+.alert-error { background: #fff5f5; color: #c53030; padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; }
+
+.card { background: #fff; border-radius: 8px; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+.form { margin-bottom: 1.5rem; }
+.form label { display: flex; flex-direction: column; gap: 0.25rem; margin-bottom: 0.75rem; font-size: 0.875rem; color: #555; }
+.form input, .form select { padding: 0.5rem; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.875rem; }
+.form-actions { display: flex; gap: 0.5rem; margin-top: 0.25rem; }
+
+table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+th { text-align: left; padding: 0.4rem 0; border-bottom: 2px solid #e2e8f0; color: #666; font-weight: 600; font-size: 0.8rem; }
+td { padding: 0.45rem 0; border-bottom: 1px solid #f0f0f0; }
+.mono { font-family: monospace; font-size: 0.8rem; }
+.empty { color: #999; font-style: italic; padding: 0.75rem 0; }
+
+.badge { padding: 0.15rem 0.45rem; border-radius: 4px; font-size: 0.72rem; font-weight: 600; }
+.badge.pending   { background: #fefcbf; color: #744210; }
+.badge.completed { background: #f0fff4; color: #276749; }
+.badge.failed    { background: #fff5f5; color: #c53030; }
+.badge.cancelled { background: #e2e8f0; color: #4a5568; }
