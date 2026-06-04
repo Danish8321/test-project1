@@ -19,8 +19,15 @@ public static class DepositEndpoints
 
         g.MapPost("/", async (CreateDepositRequest req, IDepositService svc) =>
         {
-            var d = await svc.CreateAsync(req.CustomerId, req.FundingAccountId, req.Amount);
-            return Results.Created($"/deposits/{d.Id}", d);
+            try
+            {
+                var d = await svc.CreateAsync(req.CustomerId, req.FundingAccountId, req.Amount);
+                return Results.Created($"/deposits/{d.Id}", d);
+            }
+            catch (HttpRequestException ex)
+            {
+                return Results.BadRequest(new { error = $"Circle API error: {ex.Message}" });
+            }
         });
     }
 }

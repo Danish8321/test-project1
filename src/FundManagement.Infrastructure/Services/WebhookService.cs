@@ -62,24 +62,24 @@ public class WebhookService : IWebhookService
 
     private async Task DispatchAsync(string eventType, string payload)
     {
-        var doc = JsonDocument.Parse(payload);
+        using var doc = JsonDocument.Parse(payload);
         switch (eventType)
         {
             case "payments.payment_intent.completed":
-                await _deposits.ProcessSettlementAsync(
-                    doc.RootElement.GetProperty("paymentIntentId").GetString()!, "complete");
+                if (doc.RootElement.TryGetProperty("paymentIntentId", out var pId1))
+                    await _deposits.ProcessSettlementAsync(pId1.GetString()!, "complete");
                 break;
             case "payments.payment_intent.failed":
-                await _deposits.ProcessSettlementAsync(
-                    doc.RootElement.GetProperty("paymentIntentId").GetString()!, "failed");
+                if (doc.RootElement.TryGetProperty("paymentIntentId", out var pId2))
+                    await _deposits.ProcessSettlementAsync(pId2.GetString()!, "failed");
                 break;
             case "payouts.payout.complete":
-                await _withdrawals.ProcessPayoutSettlementAsync(
-                    doc.RootElement.GetProperty("payoutId").GetString()!, "complete");
+                if (doc.RootElement.TryGetProperty("payoutId", out var pId3))
+                    await _withdrawals.ProcessPayoutSettlementAsync(pId3.GetString()!, "complete");
                 break;
             case "payouts.payout.failed":
-                await _withdrawals.ProcessPayoutSettlementAsync(
-                    doc.RootElement.GetProperty("payoutId").GetString()!, "failed");
+                if (doc.RootElement.TryGetProperty("payoutId", out var pId4))
+                    await _withdrawals.ProcessPayoutSettlementAsync(pId4.GetString()!, "failed");
                 break;
         }
     }
