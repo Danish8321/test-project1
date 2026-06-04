@@ -37,3 +37,4 @@ secrets.json
 # OS
 .DS_Store
 Thumbs.db
+nul
