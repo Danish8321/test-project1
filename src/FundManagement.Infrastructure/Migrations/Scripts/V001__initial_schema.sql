@@ -71,3 +71,11 @@ CREATE TABLE reconciliation_records (
     mismatch_reason TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+-- Indexes for balance derivation performance
+CREATE INDEX idx_ledger_entries_funding_account_id ON ledger_entries(funding_account_id);
+CREATE INDEX idx_ledger_entries_reference_id ON ledger_entries(reference_id);
+
+-- Prevent duplicate reconciliation records
+ALTER TABLE reconciliation_records
+    ADD CONSTRAINT uq_reconciliation_records UNIQUE (circle_reference_id, record_type);

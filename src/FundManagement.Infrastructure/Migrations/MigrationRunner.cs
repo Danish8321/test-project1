@@ -25,6 +25,9 @@ public class MigrationRunner
         var result = upgrader.PerformUpgrade();
 
         if (!result.Successful)
-            throw new Exception($"Migration failed: {result.Error.Message}", result.Error);
+        {
+            var msg = result.Error?.Message ?? "Unknown migration failure";
+            throw new Exception($"Migration failed: {msg}", result.Error);
+        }
     }
 }
