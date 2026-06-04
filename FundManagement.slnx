@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/FundManagement.Api/FundManagement.Api.csproj" />
+    <Project Path="src/FundManagement.Application/FundManagement.Application.csproj" />
+    <Project Path="src/FundManagement.Domain/FundManagement.Domain.csproj" />
+    <Project Path="src/FundManagement.Infrastructure/FundManagement.Infrastructure.csproj" />
+  </Folder>
+</Solution>

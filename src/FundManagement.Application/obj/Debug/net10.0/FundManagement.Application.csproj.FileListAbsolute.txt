@@ -1,0 +1,16 @@
+C:\Users\MOGAMBO\Documents\MyDocs\Repository\Self\test-project1\src\FundManagement.Application\bin\Debug\net10.0\FundManagement.Application.deps.json
+C:\Users\MOGAMBO\Documents\MyDocs\Repository\Self\test-project1\src\FundManagement.Application\bin\Debug\net10.0\FundManagement.Application.dll
+C:\Users\MOGAMBO\Documents\MyDocs\Repository\Self\test-project1\src\FundManagement.Application\bin\Debug\net10.0\FundManagement.Application.pdb
+C:\Users\MOGAMBO\Documents\MyDocs\Repository\Self\test-project1\src\FundManagement.Application\bin\Debug\net10.0\FundManagement.Domain.dll
+C:\Users\MOGAMBO\Documents\MyDocs\Repository\Self\test-project1\src\FundManagement.Application\bin\Debug\net10.0\FundManagement.Domain.pdb
+C:\Users\MOGAMBO\Documents\MyDocs\Repository\Self\test-project1\src\FundManagement.Application\obj\Debug\net10.0\FundManagement.Application.csproj.AssemblyReference.cache
+C:\Users\MOGAMBO\Documents\MyDocs\Repository\Self\test-project1\src\FundManagement.Application\obj\Debug\net10.0\FundManagement.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\MOGAMBO\Documents\MyDocs\Repository\Self\test-project1\src\FundManagement.Application\obj\Debug\net10.0\FundManagement.Application.AssemblyInfoInputs.cache
+C:\Users\MOGAMBO\Documents\MyDocs\Repository\Self\test-project1\src\FundManagement.Application\obj\Debug\net10.0\FundManagement.Application.AssemblyInfo.cs
+C:\Users\MOGAMBO\Documents\MyDocs\Repository\Self\test-project1\src\FundManagement.Application\obj\Debug\net10.0\FundManagement.Application.csproj.CoreCompileInputs.cache
+C:\Users\MOGAMBO\Documents\MyDocs\Repository\Self\test-project1\src\FundManagement.Application\obj\Debug\net10.0\FundManagement.Application.sourcelink.json
+C:\Users\MOGAMBO\Documents\MyDocs\Repository\Self\test-project1\src\FundManagement.Application\obj\Debug\net10.0\FundMana.41C152C0.Up2Date
+C:\Users\MOGAMBO\Documents\MyDocs\Repository\Self\test-project1\src\FundManagement.Application\obj\Debug\net10.0\FundManagement.Application.dll
+C:\Users\MOGAMBO\Documents\MyDocs\Repository\Self\test-project1\src\FundManagement.Application\obj\Debug\net10.0\refint\FundManagement.Application.dll
+C:\Users\MOGAMBO\Documents\MyDocs\Repository\Self\test-project1\src\FundManagement.Application\obj\Debug\net10.0\FundManagement.Application.pdb
+C:\Users\MOGAMBO\Documents\MyDocs\Repository\Self\test-project1\src\FundManagement.Application\obj\Debug\net10.0\ref\FundManagement.Application.dll
