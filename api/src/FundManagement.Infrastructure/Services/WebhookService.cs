@@ -63,24 +63,32 @@ public class WebhookService : IWebhookService
     private async Task DispatchAsync(string eventType, string payload)
     {
         using var doc = JsonDocument.Parse(payload);
+
+        // Circle places the resource ID at notification.id — never root level
+        if (!doc.RootElement.TryGetProperty("notification", out var notification))
+            return;
+
+        if (!notification.TryGetProperty("id", out var idProp))
+            return;
+
+        var resourceId = idProp.GetString();
+        if (resourceId == null) return;
+
         switch (eventType)
         {
             case "payments.payment_intent.completed":
-                if (doc.RootElement.TryGetProperty("paymentIntentId", out var pId1))
-                    await _deposits.ProcessSettlementAsync(pId1.GetString()!, "complete");
+                await _deposits.ProcessSettlementAsync(resourceId, "complete");
                 break;
             case "payments.payment_intent.failed":
-                if (doc.RootElement.TryGetProperty("paymentIntentId", out var pId2))
-                    await _deposits.ProcessSettlementAsync(pId2.GetString()!, "failed");
+                await _deposits.ProcessSettlementAsync(resourceId, "failed");
                 break;
             case "payouts.payout.complete":
-                if (doc.RootElement.TryGetProperty("payoutId", out var pId3))
-                    await _withdrawals.ProcessPayoutSettlementAsync(pId3.GetString()!, "complete");
+                await _withdrawals.ProcessPayoutSettlementAsync(resourceId, "complete");
                 break;
             case "payouts.payout.failed":
-                if (doc.RootElement.TryGetProperty("payoutId", out var pId4))
-                    await _withdrawals.ProcessPayoutSettlementAsync(pId4.GetString()!, "failed");
+                await _withdrawals.ProcessPayoutSettlementAsync(resourceId, "failed");
                 break;
+            // All other notificationTypes: log and ignore — do not error
         }
     }
 }
