@@ -1,5 +1,4 @@
 using System.Net.Http.Headers;
-using FundManagement.Api.Endpoints;
 using FundManagement.Application.Common;
 using FundManagement.Application.Customers;
 using FundManagement.Application.Deposits;
@@ -40,7 +39,7 @@ builder.Services.AddScoped<IWithdrawalService, WithdrawalService>();
 builder.Services.AddScoped<IWebhookService, WebhookService>();
 builder.Services.AddScoped<IReconciliationService, ReconciliationService>();
 
-builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors(options =>
@@ -59,13 +58,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 app.UseCors();
-
-app.MapHealthEndpoints();
-app.MapCustomerEndpoints();
-app.MapDepositEndpoints();
-app.MapWithdrawalEndpoints();
-app.MapLedgerEndpoints();
-app.MapWebhookEndpoints();
-app.MapReconciliationEndpoints();
+app.MapControllers();
 
 app.Run();
