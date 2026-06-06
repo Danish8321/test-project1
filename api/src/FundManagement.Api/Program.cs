@@ -26,6 +26,13 @@ builder.Services.AddHttpClient<ICircleClient, CircleClient>(client =>
         new AuthenticationHeaderValue("Bearer", builder.Configuration["Circle:ApiKey"]);
 });
 
+builder.Services.AddHttpClient<CircleSignatureValidator>(client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["Circle:BaseUrl"]!);
+    client.DefaultRequestHeaders.Authorization =
+        new AuthenticationHeaderValue("Bearer", builder.Configuration["Circle:ApiKey"]);
+});
+
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<ILedgerService, LedgerService>();
 builder.Services.AddScoped<IDepositService, DepositService>();
