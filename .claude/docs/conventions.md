@@ -56,7 +56,7 @@ Config lives in `src/FundManagement.Api/appsettings.json`:
 
 For environment-specific overrides use `appsettings.Development.json` (gitignored).
 
-Angular environment (`frontend/src/environments/environment.ts`):
+Angular environment (`client/src/environments/environment.ts`):
 ```typescript
 export const environment = { apiBaseUrl: 'http://localhost:5000' };
 ```

@@ -8,11 +8,11 @@ Angular 22 + .NET 10 + PostgreSQL + Dapper. Clean Architecture + CQRS. Circle sa
 
 ```bash
 # Backend
-dotnet restore && dotnet build
-dotnet run --project src/FundManagement.Api          # runs migrations on startup
+cd api && dotnet restore && dotnet build
+dotnet run --project api/src/FundManagement.Api      # runs migrations on startup
 
 # Frontend
-cd frontend && npm install
+cd client && npm install
 ng serve                                   # http://localhost:4200
 
 # Database (Docker)
@@ -47,15 +47,15 @@ npx playwright codegen http://localhost:4200
 
 ```
 test-project1/
-  src/
-    FundManagement.Domain/          entities, value objects
-    FundManagement.Application/     commands, queries, handlers, interfaces
-    FundManagement.Infrastructure/  Dapper repos, Circle HTTP client
-    FundManagement.Api/             Minimal API endpoints, DI root
-  frontend/              Angular 22
-  migrations/            DbUp SQL scripts
-  e2e/                   Playwright specs
-  .claude/docs/          Reference docs (load on demand)
+  api/
+    FundManagement.slnx
+    src/
+      FundManagement.Domain/          entities, value objects
+      FundManagement.Application/     commands, queries, handlers, interfaces
+      FundManagement.Infrastructure/  Dapper repos, Circle HTTP client
+      FundManagement.Api/             Minimal API endpoints, DI root
+  client/              Angular 22
+  .claude/docs/        Reference docs (load on demand)
 ```
 
 ---
