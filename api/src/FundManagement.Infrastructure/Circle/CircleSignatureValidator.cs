@@ -7,6 +7,7 @@ namespace FundManagement.Infrastructure.Circle;
 
 public class CircleSignatureValidator
 {
+    // ECDsa instances cached for app lifetime — static cache, intentional no-dispose for POC
     private static readonly ConcurrentDictionary<string, ECDsa> _keyCache = new();
     private readonly HttpClient _http;
 
@@ -38,7 +39,7 @@ public class CircleSignatureValidator
         using var response = await _http.GetAsync($"/v2/notifications/publicKey/{keyId}", ct);
         response.EnsureSuccessStatusCode();
 
-        var doc = await JsonDocument.ParseAsync(
+        using var doc = await JsonDocument.ParseAsync(
             await response.Content.ReadAsStreamAsync(ct), cancellationToken: ct);
         var publicKeyBase64 = doc.RootElement
             .GetProperty("data")
