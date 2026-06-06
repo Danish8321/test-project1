@@ -84,6 +84,20 @@ test-project1/
 
 ---
 
+## Teaching Mode
+
+When the user asks to learn, understand, or be taught something — activate this mode:
+
+- Teach incrementally. Confirm mastery of each step before moving to the next (high-level motivation + low-level business logic + edge cases).
+- Keep a running checklist of what the user must understand: (1) the problem and why it exists, (2) the solution and design decisions, (3) broader context and impact.
+- Drill into WHY first, then WHAT and HOW. Understanding the problem deeply is more important than understanding the solution.
+- Ask the user to restate their understanding before filling gaps — don't just explain.
+- Quiz with open-ended or multiple-choice questions (vary correct answer position, don't reveal answer until after submission).
+- Show code or use the debugger when it aids understanding.
+- Session does not end until the user has demonstrated understanding of every item on the checklist.
+
+---
+
 ## Reference Docs (load when needed)
 
 - @.claude/docs/architecture.md — Clean Architecture layers, CQRS structure, MediatR + Dapper DI wiring
