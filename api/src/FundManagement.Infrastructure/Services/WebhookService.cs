@@ -29,7 +29,7 @@ public class WebhookService : IWebhookService
             "SELECT * FROM webhook_events ORDER BY created_at DESC");
     }
 
-    public async Task ProcessAsync(string circleEventId, string eventType, string payload)
+    public async Task ProcessAsync(string notificationId, string eventType, string payload)
     {
         using var conn = _db.CreateConnection();
 
@@ -39,7 +39,7 @@ public class WebhookService : IWebhookService
               VALUES
                 (uuid_generate_v4(), @EventId, @EventType, @Payload::jsonb, @Status, NOW())
               ON CONFLICT (circle_event_id) DO NOTHING",
-            new { EventId = circleEventId, EventType = eventType, Payload = payload, Status = WebhookStatus.Received.ToString() });
+            new { EventId = notificationId, EventType = eventType, Payload = payload, Status = WebhookStatus.Received.ToString() });
 
         if (affected == 0) return;
 
@@ -49,13 +49,13 @@ public class WebhookService : IWebhookService
 
             await conn.ExecuteAsync(
                 "UPDATE webhook_events SET status = @Status, processed_at = NOW() WHERE circle_event_id = @EventId",
-                new { Status = WebhookStatus.Processed.ToString(), EventId = circleEventId });
+                new { Status = WebhookStatus.Processed.ToString(), EventId = notificationId });
         }
         catch
         {
             await conn.ExecuteAsync(
                 "UPDATE webhook_events SET status = @Status WHERE circle_event_id = @EventId",
-                new { Status = WebhookStatus.Failed.ToString(), EventId = circleEventId });
+                new { Status = WebhookStatus.Failed.ToString(), EventId = notificationId });
             throw;
         }
     }
