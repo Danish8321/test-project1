@@ -83,9 +83,9 @@ public static class ObservabilityExtensions
                 .AddHttpClientInstrumentation()
                 .AddRuntimeInstrumentation()
                 .AddProcessInstrumentation()
-                .AddOtlpExporter(o => o.Endpoint = endpoint))
+                .AddOtlpExporter(o => { o.Endpoint = endpoint; o.Protocol = OtlpExportProtocol.Grpc; }))
             .WithLogging(l => l
-                .AddOtlpExporter(o => o.Endpoint = endpoint));
+                .AddOtlpExporter(o => { o.Endpoint = endpoint; o.Protocol = OtlpExportProtocol.Grpc; }));
     }
 
     private static void ConfigureAppInsights(this WebApplicationBuilder builder, ApplicationInsightsOptions opts)
