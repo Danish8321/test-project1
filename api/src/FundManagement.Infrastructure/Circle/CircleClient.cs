@@ -71,17 +71,52 @@ public class CircleClient : ICircleClient
             TryGetString(data, "depositAddress", "chain"));
     }
 
+    public async Task<CircleRecipientResponse> CreateRecipientAsync(
+        string address, string chain, string idempotencyKey, CancellationToken ct = default)
+    {
+        var body = JsonSerializer.Serialize(new { idempotencyKey, chain, address });
+
+        using var response = await _http.PostAsync("/v1/addressBook/recipients",
+            new StringContent(body, Encoding.UTF8, "application/json"), ct);
+        response.EnsureSuccessStatusCode();
+
+        var doc = await JsonDocument.ParseAsync(await response.Content.ReadAsStreamAsync(ct), cancellationToken: ct);
+        var data = doc.RootElement.GetProperty("data");
+
+        return new CircleRecipientResponse(
+            data.GetProperty("id").GetString()!,
+            data.GetProperty("status").GetString()!,
+            TryGetString(data, "chain"),
+            TryGetString(data, "address"));
+    }
+
+    public async Task<CircleRecipientResponse> GetRecipientAsync(string recipientId, CancellationToken ct = default)
+    {
+        using var response = await _http.GetAsync($"/v1/addressBook/recipients/{recipientId}", ct);
+        response.EnsureSuccessStatusCode();
+
+        var doc = await JsonDocument.ParseAsync(await response.Content.ReadAsStreamAsync(ct), cancellationToken: ct);
+        var data = doc.RootElement.GetProperty("data");
+
+        return new CircleRecipientResponse(
+            data.GetProperty("id").GetString()!,
+            data.GetProperty("status").GetString()!,
+            TryGetString(data, "chain"),
+            TryGetString(data, "address"));
+    }
+
+    // recipientId = address book recipient UUID (must be active before calling)
     public async Task<CirclePayoutResponse> CreatePayoutAsync(
-        decimal amount, string currency, string destinationAddress, string idempotencyKey, CancellationToken ct = default)
+        decimal amount, string currency, string recipientId, string idempotencyKey, CancellationToken ct = default)
     {
         var body = JsonSerializer.Serialize(new
         {
             idempotencyKey,
             amount = new { amount = amount.ToString("F2"), currency },
-            destination = new { type = "blockchain", address = destinationAddress, chain = "ETH" }
+            destination = new { type = "address_book", id = recipientId }
         });
 
-        using var response = await _http.PostAsync("/v1/businessAccount/payouts",
+        using var response = await _http.PostAsync("/v1/payouts",
             new StringContent(body, Encoding.UTF8, "application/json"), ct);
         response.EnsureSuccessStatusCode();
 
@@ -95,7 +130,7 @@ public class CircleClient : ICircleClient
 
     public async Task<CirclePayoutResponse> GetPayoutAsync(string payoutId, CancellationToken ct = default)
     {
-        using var response = await _http.GetAsync($"/v1/businessAccount/payouts/{payoutId}", ct);
+        using var response = await _http.GetAsync($"/v1/payouts/{payoutId}", ct);
         response.EnsureSuccessStatusCode();
 
         var doc = await JsonDocument.ParseAsync(await response.Content.ReadAsStreamAsync(ct), cancellationToken: ct);
@@ -104,6 +139,11 @@ public class CircleClient : ICircleClient
         return new CirclePayoutResponse(
             data.GetProperty("id").GetString()!,
             data.GetProperty("status").GetString()!);
+    }
+
+    private static string? TryGetString(JsonElement element, string prop)
+    {
+        return element.TryGetProperty(prop, out var val) ? val.GetString() : null;
     }
 
     private static string? TryGetString(JsonElement element, string prop1, string prop2)

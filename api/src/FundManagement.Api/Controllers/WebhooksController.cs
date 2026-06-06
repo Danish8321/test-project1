@@ -33,10 +33,22 @@ public class WebhooksController(IWebhookService svc, CircleSignatureValidator va
         using var doc = System.Text.Json.JsonDocument.Parse(rawBody);
         var root = doc.RootElement;
 
-        var notificationId = root.GetProperty("notificationId").GetString()!;
         var notificationType = root.GetProperty("notificationType").GetString()!;
 
-        await svc.ProcessAsync(notificationId, notificationType, rawBody);
+        // Circle Mint format: no notificationId — use resource ID as idempotency key.
+        // Resource is at top-level key matching the notificationType (e.g. "payout", "transfer").
+        var resourceId = notificationType switch
+        {
+            "payouts" when root.TryGetProperty("payout", out var p)
+                => p.TryGetProperty("id", out var pid) ? pid.GetString() : null,
+            "transfers" when root.TryGetProperty("transfer", out var t)
+                => t.TryGetProperty("id", out var tid) ? tid.GetString() : null,
+            "addressBookRecipients" when root.TryGetProperty("addressBookRecipient", out var r)
+                => r.TryGetProperty("id", out var rid) ? rid.GetString() : null,
+            _ => null
+        } ?? $"{notificationType}:{(root.TryGetProperty("clientId", out var cid) ? cid.GetString() : Guid.NewGuid().ToString())}";
+
+        await svc.ProcessAsync(resourceId, notificationType, rawBody);
         return Ok();
     }
 }

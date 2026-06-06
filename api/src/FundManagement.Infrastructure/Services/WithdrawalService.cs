@@ -49,8 +49,19 @@ public class WithdrawalService : IWithdrawalService
         if (balance < amount)
             throw new InvalidOperationException($"Insufficient balance: {balance} < {amount}");
 
-        var payout = await _circle.CreatePayoutAsync(
-            amount, "USD", destinationAddress, Guid.NewGuid().ToString());
+        // Sep 2025 relaunch: must register address in address book first, then payout via recipient ID.
+        var recipient = await _circle.CreateRecipientAsync(destinationAddress, "ETH", Guid.NewGuid().ToString());
+
+        // Wait for recipient to become active (sandbox: seconds; production: depends on delayed-withdrawal setting)
+        for (var i = 0; i < 6 && recipient.Status != "active"; i++)
+        {
+            await Task.Delay(5_000);
+            recipient = await _circle.GetRecipientAsync(recipient.Id);
+        }
+        if (recipient.Status != "active")
+            throw new InvalidOperationException($"Circle recipient did not activate within timeout: {recipient.Id}");
+
+        var payout = await _circle.CreatePayoutAsync(amount, "USD", recipient.Id, Guid.NewGuid().ToString());
 
         using var conn = _db.CreateConnection();
         var withdrawal = await conn.QuerySingleAsync<Withdrawal>(

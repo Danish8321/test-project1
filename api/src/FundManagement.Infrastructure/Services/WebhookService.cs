@@ -63,32 +63,39 @@ public class WebhookService : IWebhookService
     private async Task DispatchAsync(string eventType, string payload)
     {
         using var doc = JsonDocument.Parse(payload);
-
-        // Circle places the resource ID at notification.id — never root level
-        if (!doc.RootElement.TryGetProperty("notification", out var notification))
-            return;
-
-        if (!notification.TryGetProperty("id", out var idProp))
-            return;
-
-        var resourceId = idProp.GetString();
-        if (resourceId == null) return;
+        var root = doc.RootElement;
 
         switch (eventType)
         {
-            case "payments.payment_intent.completed":
-                await _deposits.ProcessSettlementAsync(resourceId, "complete");
+            // Circle Mint: payout status change
+            case "payouts":
+                if (!root.TryGetProperty("payout", out var payout)) return;
+                var payoutId = payout.GetProperty("id").GetString()!;
+                var payoutStatus = payout.GetProperty("status").GetString()!;
+                if (payoutStatus is "complete" or "failed")
+                    await _withdrawals.ProcessPayoutSettlementAsync(payoutId, payoutStatus);
                 break;
-            case "payments.payment_intent.failed":
-                await _deposits.ProcessSettlementAsync(resourceId, "failed");
+
+            // Circle Mint: inbound blockchain transfer (deposit settlement)
+            case "transfers":
+                if (!root.TryGetProperty("transfer", out var transfer)) return;
+                var transferStatus = transfer.GetProperty("status").GetString()!;
+                if (transferStatus is not ("complete" or "failed")) return;
+
+                // Only handle inbound (blockchain → Circle wallet)
+                if (!transfer.TryGetProperty("source", out var src)) return;
+                if (src.TryGetProperty("type", out var srcType) && srcType.GetString() != "blockchain") return;
+
+                // Circle may include paymentIntentId on the transfer when created via a payment intent
+                if (transfer.TryGetProperty("paymentIntentId", out var piIdProp))
+                {
+                    var piId = piIdProp.GetString();
+                    if (piId != null)
+                        await _deposits.ProcessSettlementAsync(piId, transferStatus == "complete" ? "complete" : "failed");
+                }
                 break;
-            case "payouts.payout.complete":
-                await _withdrawals.ProcessPayoutSettlementAsync(resourceId, "complete");
-                break;
-            case "payouts.payout.failed":
-                await _withdrawals.ProcessPayoutSettlementAsync(resourceId, "failed");
-                break;
-            // All other notificationTypes: log and ignore — do not error
+
+            // All other notificationTypes (addressBookRecipients, etc.): log and ignore
         }
     }
 }

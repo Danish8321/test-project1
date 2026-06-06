@@ -20,6 +20,8 @@ Deposit { Id, CustomerId, FundingAccountId, CirclePaymentIntentId, Amount, Statu
 ## Withdrawal
 ```csharp
 Withdrawal { Id, CustomerId, FundingAccountId, CirclePayoutId, Amount, Status }
+// CirclePayoutId = payout UUID from POST /v1/payouts response
+// Payout flow: create recipient (POST /v1/addressBook/recipients) → wait active → create payout
 ```
 
 ## LedgerEntry
@@ -31,8 +33,13 @@ LedgerEntry { Id, FundingAccountId, EntryType, Amount, ReferenceId }
 
 ## WebhookEvent
 ```csharp
-WebhookEvent { Id, EventId, EventType, Payload, Status }
-// EventId is Circle's id — used for idempotency check before processing
+WebhookEvent { Id, CircleEventId, EventType, Payload, Status }
+// CircleEventId = resource UUID used as idempotency key:
+//   payouts notification  → payout.id
+//   transfers notification → transfer.id
+//   unknown types         → "{notificationType}:{clientId}"
+// Circle Mint has NO notificationId — idempotency is per resource, not per delivery
+// Status: Received → Processed | Failed
 ```
 
 ## Source of Truth
