@@ -1,4 +1,5 @@
 using System.Net.Http.Headers;
+using FundManagement.Api;
 using FundManagement.Application.Common;
 using FundManagement.Application.Customers;
 using FundManagement.Application.Deposits;
@@ -10,54 +11,77 @@ using FundManagement.Infrastructure.Circle;
 using FundManagement.Infrastructure.Data;
 using FundManagement.Infrastructure.Migrations;
 using FundManagement.Infrastructure.Services;
+using Serilog;
+using Serilog.Events;
 
-var builder = WebApplication.CreateBuilder(args);
+// Bootstrap logger — catches startup failures before host is built
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")!;
-builder.Services.AddSingleton<IDbConnectionFactory>(_ => new DbConnectionFactory(connectionString));
-
-DapperConfig.Configure();
-
-builder.Services.AddHttpClient<ICircleClient, CircleClient>(client =>
+try
 {
-    client.BaseAddress = new Uri(builder.Configuration["Circle:BaseUrl"]!);
-    client.DefaultRequestHeaders.Authorization =
-        new AuthenticationHeaderValue("Bearer", builder.Configuration["Circle:ApiKey"]);
-});
+    var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddHttpClient<CircleSignatureValidator>(client =>
-{
-    client.BaseAddress = new Uri(builder.Configuration["Circle:BaseUrl"]!);
-    client.DefaultRequestHeaders.Authorization =
-        new AuthenticationHeaderValue("Bearer", builder.Configuration["Circle:ApiKey"]);
-});
+    builder.AddObservability();
 
-builder.Services.AddScoped<ICustomerService, CustomerService>();
-builder.Services.AddScoped<ILedgerService, LedgerService>();
-builder.Services.AddScoped<IDepositService, DepositService>();
-builder.Services.AddScoped<IWithdrawalService, WithdrawalService>();
-builder.Services.AddScoped<IWebhookService, WebhookService>();
-builder.Services.AddScoped<IReconciliationService, ReconciliationService>();
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")!;
+    builder.Services.AddSingleton<IDbConnectionFactory>(_ => new DbConnectionFactory(connectionString));
 
-builder.Services.AddControllers();
-builder.Services.AddSwaggerGen();
+    DapperConfig.Configure();
 
-builder.Services.AddCors(options =>
-    options.AddDefaultPolicy(policy =>
-        policy.WithOrigins("http://localhost:4200")
-              .AllowAnyMethod()
-              .AllowAnyHeader()));
+    builder.Services.AddHttpClient<ICircleClient, CircleClient>(client =>
+    {
+        client.BaseAddress = new Uri(builder.Configuration["Circle:BaseUrl"]!);
+        client.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", builder.Configuration["Circle:ApiKey"]);
+    });
 
-var app = builder.Build();
+    builder.Services.AddHttpClient<CircleSignatureValidator>(client =>
+    {
+        client.BaseAddress = new Uri(builder.Configuration["Circle:BaseUrl"]!);
+        client.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", builder.Configuration["Circle:ApiKey"]);
+    });
 
-new MigrationRunner(connectionString).Run();
+    builder.Services.AddScoped<ICustomerService, CustomerService>();
+    builder.Services.AddScoped<ILedgerService, LedgerService>();
+    builder.Services.AddScoped<IDepositService, DepositService>();
+    builder.Services.AddScoped<IWithdrawalService, WithdrawalService>();
+    builder.Services.AddScoped<IWebhookService, WebhookService>();
+    builder.Services.AddScoped<IReconciliationService, ReconciliationService>();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    builder.Services.AddControllers();
+    builder.Services.AddSwaggerGen();
+
+    builder.Services.AddCors(options =>
+        options.AddDefaultPolicy(policy =>
+            policy.WithOrigins("http://localhost:4200")
+                  .AllowAnyMethod()
+                  .AllowAnyHeader()));
+
+    var app = builder.Build();
+
+    new MigrationRunner(connectionString).Run();
+
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
+
+    app.UseObservability();
+    app.UseCors();
+    app.MapControllers();
+
+    app.Run();
 }
-app.UseCors();
-app.MapControllers();
-
-app.Run();
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Host terminated unexpectedly");
+}
+finally
+{
+    Log.CloseAndFlush();
+}
