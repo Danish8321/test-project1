@@ -59,6 +59,9 @@ public static class ObservabilityExtensions
     private static void ConfigureOpenTelemetry(this WebApplicationBuilder builder, OpenTelemetryOptions opts)
     {
         var endpoint = new Uri(opts.Endpoint);
+        var protocol = opts.Protocol.Equals("Http", StringComparison.OrdinalIgnoreCase)
+            ? OtlpExportProtocol.HttpProtobuf
+            : OtlpExportProtocol.Grpc;
 
         builder.Services.AddOpenTelemetry()
             .ConfigureResource(r => r
@@ -76,20 +79,23 @@ public static class ObservabilityExtensions
                 .AddOtlpExporter(o =>
                 {
                     o.Endpoint = endpoint;
-                    o.Protocol = OtlpExportProtocol.Grpc;
+                    o.Protocol = protocol;
                 }))
             .WithMetrics(m => m
                 .AddAspNetCoreInstrumentation()
                 .AddHttpClientInstrumentation()
                 .AddRuntimeInstrumentation()
                 .AddProcessInstrumentation()
-                .AddOtlpExporter(o => { o.Endpoint = endpoint; o.Protocol = OtlpExportProtocol.Grpc; }))
+                .AddOtlpExporter(o => { o.Endpoint = endpoint; o.Protocol = protocol; }))
             .WithLogging(l => l
-                .AddOtlpExporter(o => { o.Endpoint = endpoint; o.Protocol = OtlpExportProtocol.Grpc; }));
+                .AddOtlpExporter(o => { o.Endpoint = endpoint; o.Protocol = protocol; }));
     }
 
     private static void ConfigureAppInsights(this WebApplicationBuilder builder, ApplicationInsightsOptions opts)
     {
+        if (string.IsNullOrWhiteSpace(opts.ConnectionString))
+            return;
+
         builder.Services.AddApplicationInsightsTelemetry(o =>
             o.ConnectionString = opts.ConnectionString);
     }
