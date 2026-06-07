@@ -8,5 +8,9 @@ public interface IDepositService
     Task<IEnumerable<Deposit>> GetByCustomerAsync(Guid customerId);
     Task<Deposit?> GetByIdAsync(Guid id);
     Task<Deposit> CreateAsync(Guid customerId, Guid fundingAccountId, decimal amount);
-    Task ProcessSettlementAsync(string circlePaymentIntentId, string circleStatus);
+    Task UpdateDepositAddressAsync(string paymentIntentId, string? address, string? chain, DateTimeOffset? expiresOn);
+    Task MarkPaymentDetectedAsync(string paymentIntentId, string paymentId, string? transactionHash);
+    Task ProcessSettlementByPaymentAsync(string paymentId, string paymentIntentId, decimal settlementAmount);
+    Task MarkDepositFailedAsync(string paymentIntentId);
+    Task MarkIntentCompleteAsync(string paymentIntentId);
 }

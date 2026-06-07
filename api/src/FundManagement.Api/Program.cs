@@ -52,6 +52,13 @@ try
     builder.Services.AddScoped<IWebhookService, WebhookService>();
     builder.Services.AddScoped<IReconciliationService, ReconciliationService>();
 
+    // Redis cache — falls back to in-memory when no connection string configured (local dev)
+    var redisCs = builder.Configuration["Redis:ConnectionString"];
+    if (!string.IsNullOrWhiteSpace(redisCs))
+        builder.Services.AddStackExchangeRedisCache(o => o.Configuration = redisCs);
+    else
+        builder.Services.AddDistributedMemoryCache();
+
     builder.Services.AddControllers();
     builder.Services.AddSwaggerGen();
 
